@@ -53,6 +53,12 @@ const logout = () => {
                                     Dashboard
                                 </JetNavLink>
                             </div>
+                            <!-- Navigation Links -->
+                            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                                <JetNavLink :href="route('doors.create')" :active="route().current('doors.create')">
+                                    New Door
+                                </JetNavLink>
+                            </div>
                         </div>
 
                         <div class="hidden sm:flex sm:items-center sm:ml-6">

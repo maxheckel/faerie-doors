@@ -9,6 +9,8 @@ class Locale extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['name', 'state'];
+
     public function wizards(){
         return $this->belongsToMany(User::class)->wherePivot('active', true);
     }

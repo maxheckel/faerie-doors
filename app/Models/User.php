@@ -27,6 +27,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'essay'
     ];
 
     /**
@@ -58,4 +59,8 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    public function locales(){
+        return $this->belongsToMany(Locale::class);
+    }
 }

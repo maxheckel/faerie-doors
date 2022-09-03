@@ -77,6 +77,7 @@ const submit = () => {
         </template>
 
         <form @submit.prevent="submit">
+            As a local wizard you can leave faerie doors for people to comment on.  The faeries who occupy the doors you create also do not speak any human languages, so you may reply to comments on their behalf!
             <div>
                 <JetLabel for="name" value="Wizard Name" />
                 <JetInput
@@ -92,7 +93,7 @@ const submit = () => {
             </div>
 
             <div class="mt-4">
-                <JetLabel for="email" value="Email" />
+                <JetLabel for="email" value="Email (This is what you use to log in)" />
                 <JetInput
                     id="email"
                     v-model="form.email"

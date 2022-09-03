@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->timestamps();
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
@@ -24,7 +25,6 @@ return new class extends Migration
             $table->string('profile_photo_path', 2048)->nullable();
             $table->text('essay');
             $table->boolean('active')->default(false);
-            $table->timestamps();
             $table->boolean('is_admin');
         });
     }
