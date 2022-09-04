@@ -12,6 +12,12 @@ module.exports = {
 
     theme: {
         extend: {
+
+            fontSize: {
+                'md': '2rem',
+                'sm': '1.3rem',
+                'large': '1.9rem' /* new custom font size */
+            },
             fontFamily: {
                 sans: ['Lancelot', ...defaultTheme.fontFamily.sans],
             },
