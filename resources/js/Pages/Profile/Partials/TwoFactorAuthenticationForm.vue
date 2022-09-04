@@ -115,6 +115,7 @@ const disableTwoFactorAuthentication = () => {
         </template>
 
         <template #content>
+            <img src="/img/topright.webp" class="absolute w-[200px] h-auto -mt-10 right-[70px]">
             <h3 v-if="twoFactorEnabled && ! confirming" class="text-lg font-medium text-gray-900">
                 You have enabled two factor authentication.
             </h3>

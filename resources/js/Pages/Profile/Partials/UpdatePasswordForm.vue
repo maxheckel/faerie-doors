@@ -48,6 +48,7 @@ const updatePassword = () => {
         </template>
 
         <template #form>
+            <img src="/img/topright.webp" class="absolute w-[200px] h-auto -mt-10 right-[70px]">
             <div class="col-span-6 sm:col-span-4">
                 <JetLabel for="current_password" value="Current Password" />
                 <JetInput

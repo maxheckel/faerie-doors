@@ -78,6 +78,7 @@ const clearPhotoFileInput = () => {
 
 <template>
     <JetFormSection @submitted="updateProfileInformation">
+
         <template #title>
             Profile Information
         </template>
@@ -87,6 +88,7 @@ const clearPhotoFileInput = () => {
         </template>
 
         <template #form>
+            <img src="/img/topright.webp" class="absolute w-[200px] h-auto -mt-10 right-[70px]">
             <!-- Profile Photo -->
             <div v-if="$page.props.jetstream.managesProfilePhotos" class="col-span-6 sm:col-span-4">
                 <!-- Profile Photo File Input -->

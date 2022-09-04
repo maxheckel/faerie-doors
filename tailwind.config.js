@@ -20,6 +20,7 @@ module.exports = {
             },
             fontFamily: {
                 sans: ['Lancelot', ...defaultTheme.fontFamily.sans],
+                serif: ['Almendra', ...defaultTheme.fontFamily.serif],
             },
         },
     },
