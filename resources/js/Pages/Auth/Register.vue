@@ -77,7 +77,10 @@ const submit = () => {
         </template>
 
         <form @submit.prevent="submit">
-            As a local wizard you can leave faerie doors for people to comment on.  The faeries who occupy the doors you create also do not speak any human languages, so you may reply to comments on their behalf!
+            <span class="text-md block mb-4">
+            As a local wizard you can leave faerie doors for people to leave messages in.  The faeries do not speak any human languages, so you may reply to comments on their behalf!
+            </span>
+
             <div>
                 <JetLabel for="name" value="Wizard Name" />
                 <JetInput
@@ -147,7 +150,7 @@ const submit = () => {
                 autorenew
                 </span>
             </div>
-            <div class="text-sm " v-if="form.localeName">
+            <div class="text-md" v-if="form.localeName">
                 {{capitalizeFirstLetter(form.localeName)}}, {{capitalizeFirstLetter(form.localeState)}} has {{form.wizardCount}} fellow wizards
             </div>
 

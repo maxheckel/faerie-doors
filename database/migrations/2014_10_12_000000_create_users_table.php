@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('profile_photo_path', 2048)->nullable();
             $table->text('essay');
             $table->boolean('active')->default(false);
-            $table->boolean('is_admin');
+            $table->boolean('is_admin')->default(false);
         });
     }
 
