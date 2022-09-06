@@ -1,14 +1,9 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import JetButton from '@/Components/Button.vue';
-import JetInput from '@/Components/Input.vue';
-import JetInputError from '@/Components/InputError.vue';
-import JetCheckbox from '@/Components/Checkbox.vue';
-import JetLabel from '@/Components/Label.vue';
-import Textarea from "@/Components/Textarea.vue";
 import {useForm} from "@inertiajs/inertia-vue3";
-import Button from "@/Components/Button.vue";
 import BigFirstLetter from "@/Components/BigFirstLetter.vue";
+import {reactive} from "vue";
+import {Loader} from "@googlemaps/js-api-loader";
 
 const form = useForm({
     name: '',
@@ -16,6 +11,22 @@ const form = useForm({
     longitude: '',
     bio: ''
 })
+
+const loader = new Loader({
+    apiKey: "AIzaSyA5D4hMDFEC0LeERCZikKGGyiWShCkwJ3Y",
+    version: "weekly",
+    libraries: ["places"]
+});
+
+
+const mapOptions = {
+    center: {
+        lat: 0,
+        lng: 0
+    },
+    zoom: 18
+};
+
 
 const props = defineProps({
     template: Object
@@ -28,8 +39,43 @@ if (navigator.geolocation) {
 }
 
 function showPosition(position) {
+
     form.latitude = String(position.coords.latitude);
     form.longitude = String(position.coords.longitude);
+    mapOptions.center.lat = position.coords.latitude
+    mapOptions.center.lng = position.coords.longitude
+    console.log('here');
+    // Promise
+    loader
+        .load()
+        .then((google) => {
+            const map = new google.maps.Map(document.getElementById("map"), mapOptions);
+            google.maps.event.addListener(map, "click", (event) => {
+                addMarker(event.latLng, map, google);
+            });
+
+
+        })
+        .catch(e => {
+            console.log(e);
+        });
+}
+
+const existingMarkers = []
+
+function addMarker(latlng, map, google) {
+
+    form.latitude = latlng.lat();
+    form.longitude = latlng.lng();
+    console.log(form.latitude, form.longitude);
+    const marker = new google.maps.Marker({
+        position: latlng
+    })
+    marker.setMap(map)
+    for(let x = 0; x < existingMarkers.length; x++){
+        existingMarkers[x].setMap(null);
+    }
+    existingMarkers.push(marker)
 }
 
 </script>
@@ -58,9 +104,13 @@ function showPosition(position) {
                         </div>
                         <div class="bg-amber-100 p-4 rounded-lg text-4xl mt-4 p-8">
                             <div class="w-[90px] h-[50px] float-right inline-block font-serif"></div>
+                            <span class="text-xl"> Your mind buzzes as you translate the faerie introducing themselves:</span>
                             <span class="text-8xl block -mb-16">"</span><BigFirstLetter class="block">{{props.template.bio}}</BigFirstLetter><span class="text-8xl">"</span>
+                            <a class="text-lg underline">Hmm, that intro doesn't seem right, let's try translating again...</a>
                         </div>
                     </div>
+                    <div class="text-6xl text-center mt-10">Where are you placing this door?</div>
+                    <div class="w-full mt-4" style="height: 400px" id="map"></div>
                 </div>
             </div>
         </div>

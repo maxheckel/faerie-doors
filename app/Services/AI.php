@@ -20,11 +20,11 @@ class AI {
         'robert jordan'
     ];
 
-    public function getBio(){
+    public function getBio($name){
         $respons = $this->client->post('https://api.openai.com/v1/completions', [
             'json' => [
                 'model' => 'text-davinci-002',
-                'prompt' => 'What is a bio written by a faerie in first person in the style of '.$this->styles[array_rand($this->styles)].'?',
+                'prompt' => 'A faerie who\'s name is '.$name.' introducing themselves in the style of '.$this->styles[array_rand($this->styles)].':',
                 'max_tokens' => 400
             ]
         ]);

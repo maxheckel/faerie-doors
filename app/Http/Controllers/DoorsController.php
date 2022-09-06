@@ -15,9 +15,9 @@ class DoorsController extends Controller
     }
 
     public function create(){
-        $template = FaerieTemplate::where('used', false)->whereNotNull('bio')->inRandomOrder()->first();
+        $template = FaerieTemplate::where('used', false)->inRandomOrder()->first();
         if ($template->bio == null){
-            $template->bio = $this->aiService->getBio();
+            $template->bio = $this->aiService->getBio($template->name);
             $template->save();
         }
         return Inertia::render('Doors/CreateEdit', [
