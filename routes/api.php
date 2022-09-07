@@ -19,3 +19,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('/locale', [\App\Http\Controllers\LocaleController::class, 'getWizards']);
+Route::get('/bio', function (Request $request){
+    /** @var \App\Services\AI $ai */
+    $ai = app(\App\Services\AI::class);
+    return [
+        'bio' => $ai->getBio($request->get('name'))
+    ];
+});
