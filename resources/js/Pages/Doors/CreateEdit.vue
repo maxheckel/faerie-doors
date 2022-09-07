@@ -4,17 +4,19 @@ import {useForm} from "@inertiajs/inertia-vue3";
 import BigFirstLetter from "@/Components/BigFirstLetter.vue";
 import {reactive} from "vue";
 import {Loader} from "@googlemaps/js-api-loader";
+import Button from "@/Components/Button.vue";
 
 const form = useForm({
     name: '',
     latitude: '',
     longitude: '',
-    bio: ''
+    bio: '',
+    template_id: 0
 })
 
 const data = reactive({
     mapLoaded: false,
-    bioLoaded: true
+    bioLoaded: true,
 })
 
 const loader = new Loader({
@@ -89,14 +91,28 @@ function addMarker(latlng, map, google) {
     existingMarkers.push(marker)
 }
 
-function newBio(){
+function newBio() {
     data.bioLoaded = false
-    fetch('/api/bio?name='+form.name).then((res) => {
+    fetch('/api/bio?name=' + form.name).then((res) => {
         return res.json();
     }).then((json) => {
         data.bioLoaded = true
-       form.bio = json.bio;
+        form.bio = json.bio;
     })
+}
+
+function newName() {
+    fetch('/api/name').then((res) => {
+        return res.json();
+    }).then((json) => {
+        form.bio = form.bio.replace(form.name, json.name);
+        form.name = json.name;
+
+    })
+}
+
+function submit(){
+    console.log(form);
 }
 
 </script>
@@ -115,8 +131,8 @@ function newBio(){
                 <div class="bg-white shadow-xl sm:rounded-lg p-4 framed">
                     <div class="text-5xl mb-8 pr-[200px] text-center">
                         As you peer into your spellbook you see a faerie, they introduce themselves as <span
-                        class="font-bold"> {{ props.template.name }}</span>
-
+                        class="font-bold"> {{ form.name }}</span>
+                        <a @click="newName()" class="underline block text-md mt-8 cursor-pointer">Or...maybe that isn't their name?</a>
                     </div>
 
                     <div class="md:grid md:grid-cols-[30%_70%] gap-4 relative pr-4 z-0">
@@ -129,21 +145,24 @@ function newBio(){
                         <div class="bg-amber-100 p-4 rounded-lg text-4xl mt-4 p-8">
                             <div class="w-[90px] h-[50px] float-right inline-block font-serif"></div>
                             <span v-if="data.bioLoaded"
-                                class="text-xl"> Your mind buzzes as you translate the faerie introducing themselves:</span>
+                                  class="text-xl"> Your mind buzzes as you translate the faerie introduces themselves:</span>
                             <span class="text-8xl block -mb-16" v-if="data.bioLoaded">"</span>
                             <BigFirstLetter v-if="data.bioLoaded" class="block">{{ form.bio }}</BigFirstLetter>
                             <span class="text-8xl" v-if="data.bioLoaded">"</span>
-                            <a v-if="data.bioLoaded" @click="newBio()" class="text-lg underline cursor-pointer">Hmm, that intro doesn't seem right, let's try translating
+                            <a v-if="data.bioLoaded" @click="newBio()"
+                               class="text-lg underline cursor-pointer block -mt-8">Hmm, that intro doesn't seem right,
+                                let's try translating
                                 again...</a>
                             <span v-if="!data.bioLoaded" class="material-symbols-outlined animate-spin text-8xl">
                             autorenew
                             </span>
                         </div>
                     </div>
-                    <div class="text-5xl text-center mt-20">Where does {{props.template.name}} live?</div>
+                    <div class="text-5xl text-center mt-20">Where does {{ props.template.name }} live?</div>
                     <div class="map relative">
-                        <div v-if="data.mapLoaded" class="w-full mt-4" style="height: 400px" id="map"></div>
-                        <div v-if="data.mapLoaded" class="w-full mt-4 absolute top-0" style="height: 400px;background: rgb(2,0,36); background: radial-gradient(circle, rgba(2,0,36,0) 70%, rgba(195,134,99,1) 100%);"></div>
+                        <div v-if="data.mapLoaded" class="w-full my-4" style="height: 400px" id="map"></div>
+                        <div v-if="data.mapLoaded" class="w-full mt-4 absolute top-0"
+                             style="pointer-events: none; height: 400px;background: rgb(2,0,36); background: radial-gradient(circle, rgba(2,0,36,0) 70%, rgba(195,134,99,1) 100%);"></div>
                         <img v-if="data.mapLoaded" src="/img/mouse.webp" class="absolute -bottom-10 -left-4 w-40">
 
                         <div v-if="!data.mapLoaded" class="w-full text-center py-10">
@@ -157,7 +176,7 @@ function newBio(){
 
                         </div>
                     </div>
-
+                    <Button @click="submit" class="text-4xl mt-8">Create Door</Button>
                 </div>
             </div>
         </div>

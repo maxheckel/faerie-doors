@@ -26,3 +26,9 @@ Route::get('/bio', function (Request $request){
         'bio' => $ai->getBio($request->get('name'))
     ];
 });
+
+Route::get('/name', function (Request $request){
+    return [
+        'name' => \App\Services\Names::generate()
+    ];
+});
