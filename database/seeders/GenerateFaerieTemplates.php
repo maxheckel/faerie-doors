@@ -29,15 +29,15 @@ class GenerateFaerieTemplates extends Seeder
 
 
 //         First check if we need to upload any images
-        foreach (Storage::disk('server')->allFiles('scripts/generate-pfps/saved-outputs') as $file){
-            $name = last(explode('/', $file));
-            $localFile = Storage::disk('server')->get($file);
-            $remote = Storage::disk('s3')->get('/templates/'.$name);
-            if ($remote == null){
-                Storage::disk('s3')->put('/templates/'.$name, $localFile);
-                $this->command->info('Wrote '.$name);
-            }
-        }
+//        foreach (Storage::disk('server')->allFiles('scripts/generate-pfps/saved-outputs') as $file){
+//            $name = last(explode('/', $file));
+//            $localFile = Storage::disk('server')->get($file);
+//            $remote = Storage::disk('s3')->get('/templates/'.$name);
+//            if ($remote == null){
+//                Storage::disk('s3')->put('/templates/'.$name, $localFile);
+//                $this->command->info('Wrote '.$name);
+//            }
+//        }
 
         foreach (Storage::disk('s3')->allFiles('/templates') as $remote){
             $check = FaerieTemplate::where('image', $remote)->first();

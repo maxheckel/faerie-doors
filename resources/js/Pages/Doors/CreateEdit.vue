@@ -5,18 +5,22 @@ import BigFirstLetter from "@/Components/BigFirstLetter.vue";
 import {reactive} from "vue";
 import {Loader} from "@googlemaps/js-api-loader";
 import Button from "@/Components/Button.vue";
+import Textarea from "@/Components/Textarea.vue";
+import Portrait from "@/Components/Portrait.vue";
 
 const form = useForm({
     name: '',
     latitude: '',
     longitude: '',
     bio: '',
+    newBio: '',
     template_id: 0
 })
 
 const data = reactive({
     mapLoaded: false,
     bioLoaded: true,
+    manuallyEditing: false
 })
 
 const loader = new Loader({
@@ -42,6 +46,7 @@ const props = defineProps({
 
 form.name = props.template.name;
 form.bio = props.template.bio;
+form.newBio = props.template.bio;
 form.template_id = props.template.id;
 
 if (navigator.geolocation) {
@@ -98,6 +103,7 @@ function newBio() {
     }).then((json) => {
         data.bioLoaded = true
         form.bio = json.bio;
+        form.newBio = form.bio;
     })
 }
 
@@ -106,13 +112,24 @@ function newName() {
         return res.json();
     }).then((json) => {
         form.bio = form.bio.replace(form.name, json.name);
+        form.newBio = form.bio;
         form.name = json.name;
 
     })
 }
 
-function submit(){
-    console.log(form);
+function cancelEditBio(){
+    form.newBio = form.bio;
+    data.manuallyEditing = false;
+}
+
+function saveNewBio(){
+    form.bio = form.newBio;
+    data.manuallyEditing = false;
+}
+
+function submit() {
+    form.post(route('doors.store'))
 }
 
 </script>
@@ -127,19 +144,19 @@ function submit(){
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <img src="/img/topright.webp" class="absolute w-[200px] h-auto right-[100px] z-10">
+                <img src="/img/topright.webp" class="absolute w-[100px] sm:w-[200px] h-auto right-0 md:right-[100px] z-10">
                 <div class="bg-white shadow-xl sm:rounded-lg p-4 framed">
-                    <div class="text-5xl mb-8 pr-[200px] text-center">
+                    <div class="text-5xl mb-8 md:pr-[200px] text-center">
+                        <div class="md:hidden w-[50px] h-[40px] inline-block float-right"></div>
                         As you peer into your spellbook you see a faerie, they introduce themselves as <span
                         class="font-bold"> {{ form.name }}</span>
-                        <a @click="newName()" class="underline block text-md mt-8 cursor-pointer">Or...maybe that isn't their name?</a>
+                        <a @click="newName()" class="underline block text-md mt-8 cursor-pointer">Or...maybe that isn't
+                            their name?</a>
                     </div>
 
                     <div class="md:grid md:grid-cols-[30%_70%] gap-4 relative pr-4 z-0">
                         <div class="relative md:w-full w-1/2 mx-auto">
-                            <img class="z-0 mx-auto w-4/5 mt-16 md:mt-8 lg:mt-16 top-0 relative rounded-xl rounded"
-                                 :src="'https://faerie-doors.s3.us-east-2.amazonaws.com/'+props.template.image">
-                            <img src="/img/frame.webp" class="absolute md:top-0 -top-16 float-left z-10">
+                            <Portrait :image_url="'https://faerie-doors.s3.us-east-2.amazonaws.com/'+props.template.image"/>
                             <a class="block underline mt-20 cursor-pointer" href="/doors/create">Maybe a new faerie?</a>
                         </div>
                         <div class="bg-amber-100 p-4 rounded-lg text-4xl mt-4 p-8">
@@ -147,18 +164,37 @@ function submit(){
                             <span v-if="data.bioLoaded"
                                   class="text-xl"> Your mind buzzes as you translate the faerie introduces themselves:</span>
                             <span class="text-8xl block -mb-16" v-if="data.bioLoaded">"</span>
-                            <BigFirstLetter v-if="data.bioLoaded" class="block">{{ form.bio }}</BigFirstLetter>
+                            <BigFirstLetter v-if="data.bioLoaded && !data.manuallyEditing" class="block">{{
+                                    form.bio
+                                }}
+                            </BigFirstLetter>
+                            <div v-if="data.manuallyEditing">
+                                <Textarea class="w-full h-60 text-2xl" v-model="form.newBio"></Textarea>
+                            </div>
+
                             <span class="text-8xl" v-if="data.bioLoaded">"</span>
-                            <a v-if="data.bioLoaded" @click="newBio()"
-                               class="text-lg underline cursor-pointer block -mt-8">Hmm, that intro doesn't seem right,
-                                let's try translating
-                                again...</a>
+                            <div v-if="!data.manuallyEditing">
+                                <a v-if="data.bioLoaded" @click="newBio()"
+                                   class="text-lg underline cursor-pointer block -mt-8">Hmm, that intro doesn't seem
+                                    right,
+                                    let's try magically translating
+                                    again...</a>
+                                <a v-if="data.bioLoaded" class="text-lg underline cursor-pointer block mt-8"
+                                   @click="data.manuallyEditing = !data.manuallyEditing">I want to manually translate
+                                    {{ form.name }}'s introduction</a>
+                            </div>
+                            <div v-else class="-mt-8">
+                                <Button class="bg-emerald-500" @click="saveNewBio()">Save</Button>
+                                <Button class="ml-4" @click="cancelEditBio()">Cancel</Button>
+                            </div>
                             <span v-if="!data.bioLoaded" class="material-symbols-outlined animate-spin text-8xl">
                             autorenew
                             </span>
                         </div>
                     </div>
                     <div class="text-5xl text-center mt-20">Where does {{ props.template.name }} live?</div>
+                    <div class="text-lg text-center">You don't have to choose this now, you can always add it later.
+                    </div>
                     <div class="map relative">
                         <div v-if="data.mapLoaded" class="w-full my-4" style="height: 400px" id="map"></div>
                         <div v-if="data.mapLoaded" class="w-full mt-4 absolute top-0"

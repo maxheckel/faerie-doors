@@ -3,15 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Locale;
+use App\Services\Geocoding;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 
 class LocaleController extends Controller
 {
     public function getWizards(Request $request){
-        $client = new Client();
-        $resp = json_decode($client->get("https://maps.googleapis.com/maps/api/geocode/json?address={$request->get('zip')}&sensor=true&key=AIzaSyA5D4hMDFEC0LeERCZikKGGyiWShCkwJ3Y")->getBody()->getContents());
-
+        $resp = Geocoding::getForZip($request->get('zip'));
         $resp = collect($resp->results[0]->address_components);
         $localeName = '';
         $state = '';
@@ -31,4 +30,6 @@ class LocaleController extends Controller
             'wizards' => $localeCheck?->wizards->count() ?? 0
         ];
     }
+
+
 }

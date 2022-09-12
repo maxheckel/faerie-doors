@@ -63,4 +63,8 @@ class User extends Authenticatable
     public function locales(){
         return $this->belongsToMany(Locale::class);
     }
+
+    public function faeries(){
+        return $this->hasMany(Faerie::class);
+    }
 }

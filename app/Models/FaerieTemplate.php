@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class FaerieTemplate extends Model
 {
     use HasFactory;
+
+    public function faeries(){
+        return $this->hasMany(Faerie::class);
+    }
 }
