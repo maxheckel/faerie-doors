@@ -72,6 +72,8 @@ class DoorsController extends Controller
 
     public function getPublic(Request $request, $slug){
         $faerie = Faerie::where('uuid', $slug);
-        dd($faerie);
+        return Inertia::render('Doors/Public', [
+            'faerie' => $faerie
+        ]);
     }
 }
