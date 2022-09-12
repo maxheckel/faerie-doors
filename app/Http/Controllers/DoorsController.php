@@ -10,6 +10,7 @@ use App\Services\Geocoding;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Ramsey\Uuid\Uuid;
 
 class DoorsController extends Controller
 {
@@ -53,10 +54,24 @@ class DoorsController extends Controller
         $faerie->longitude = $request->get('longitude');
         $faerie->name = $request->get('name');
         $faerie->locale_id = $locale->id;
+        $faerie->uuid = Uuid::uuid4();
         $faerie->user_id = Auth::id();
         $faerie->image_url = 'https://faerie-doors.s3.us-east-2.amazonaws.com/'.$template->image;
         $faerie->save();
 
         return redirect(route('dashboard'));
+    }
+
+    public function show(Request $request, $id){
+        $faerie = Faerie::find($id);
+        if ($faerie->user_id != Auth::id()){
+            abort(403);
+        }
+
+    }
+
+    public function getPublic(Request $request, $slug){
+        $faerie = Faerie::where('uuid', $slug);
+        dd($faerie);
     }
 }

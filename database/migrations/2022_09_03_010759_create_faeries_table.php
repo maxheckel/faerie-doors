@@ -18,6 +18,7 @@ return new class extends Migration
         Schema::create('faeries', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->uuid();
             $table->float('latitude')->nullable();
             $table->float('longitude')->nullable();
             $table->string('name');
