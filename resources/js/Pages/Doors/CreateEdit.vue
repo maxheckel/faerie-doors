@@ -3,10 +3,11 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import {useForm} from "@inertiajs/inertia-vue3";
 import BigFirstLetter from "@/Components/BigFirstLetter.vue";
 import {reactive} from "vue";
-import {Loader} from "@googlemaps/js-api-loader";
+
 import Button from "@/Components/Button.vue";
 import Textarea from "@/Components/Textarea.vue";
 import Portrait from "@/Components/Portrait.vue";
+import Map from "@/Components/Map.vue";
 
 const form = useForm({
     name: '',
@@ -18,26 +19,12 @@ const form = useForm({
 })
 
 const data = reactive({
-    mapLoaded: false,
     bioLoaded: true,
     manuallyEditing: false
 })
 
-const loader = new Loader({
-    apiKey: "AIzaSyA5D4hMDFEC0LeERCZikKGGyiWShCkwJ3Y",
-    version: "weekly",
-    libraries: ["places"]
-});
 
 
-const mapOptions = {
-    mapId: "d848f879ef61ec24",
-    center: {
-        lat: 0,
-        lng: 0
-    },
-    zoom: 18
-};
 
 
 const props = defineProps({
@@ -51,52 +38,6 @@ form.bio = props.template.bio;
 form.newBio = props.template.bio;
 form.template_id = props.template.id;
 
-if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(showPosition);
-} else {
-    x.innerHTML = "Geolocation is not supported by this browser.";
-}
-
-function showPosition(position) {
-    data.mapLoaded = true;
-    form.latitude = String(position.coords.latitude);
-    form.longitude = String(position.coords.longitude);
-    mapOptions.center.lat = position.coords.latitude
-    mapOptions.center.lng = position.coords.longitude
-    console.log('here');
-    // Promise
-    loader
-        .load()
-        .then((google) => {
-
-            const map = new google.maps.Map(document.getElementById("map"), mapOptions);
-            google.maps.event.addListener(map, "click", (event) => {
-                addMarker(event.latLng, map, google);
-            });
-
-
-        })
-        .catch(e => {
-            console.log(e);
-        });
-}
-
-const existingMarkers = []
-
-function addMarker(latlng, map, google) {
-
-    form.latitude = latlng.lat();
-    form.longitude = latlng.lng();
-    console.log(form.latitude, form.longitude);
-    const marker = new google.maps.Marker({
-        position: latlng
-    })
-    marker.setMap(map)
-    for (let x = 0; x < existingMarkers.length; x++) {
-        existingMarkers[x].setMap(null);
-    }
-    existingMarkers.push(marker)
-}
 
 function newBio() {
     data.bioLoaded = false
@@ -202,23 +143,7 @@ function submit() {
                     <div class="text-5xl text-center mt-20">Where does {{ props.template.name }} live?</div>
                     <div class="text-lg text-center">You don't have to choose this now, you can always add it later.
                     </div>
-                    <div class="map relative">
-                        <div v-if="data.mapLoaded" class="w-full my-4" style="height: 400px" id="map"></div>
-                        <div v-if="data.mapLoaded" class="w-full mt-4 absolute top-0"
-                             style="pointer-events: none; height: 400px;background: rgb(2,0,36); background: radial-gradient(circle, rgba(2,0,36,0) 70%, rgba(195,134,99,1) 100%);"></div>
-                        <img v-if="data.mapLoaded" src="/img/mouse.webp" class="absolute -bottom-10 -left-4 w-40">
-
-                        <div v-if="!data.mapLoaded" class="w-full text-center py-10">
-                        <span class="material-symbols-outlined text-8xl ml-auto relative">
-                            map
-                            </span>
-                            <br>
-                            <span class="text-2xl">
-                        Loading Map
-                        </span>
-
-                        </div>
-                    </div>
+                    <Map :clickable="true" @latChanged="(lat) => form.latitude = lat" @lngChanged="(lng) => form.longitude = lng"></Map>
                     <Button @click="submit" class="text-4xl mt-8">Create Door</Button>
                 </div>
             </div>

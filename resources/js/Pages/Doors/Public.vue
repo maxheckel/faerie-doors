@@ -73,9 +73,13 @@
             </form>
         </AuthenticationCard>
         <img :src="randomImage()" class="w-1/4 py-8 relative mx-auto">
-        <div class="text-2xl text-center">Other Messages:</div>
+        <div class="text-2xl text-center" v-if="faerie.comments.length > 0">Other Messages:</div>
         <Comment class="text-2xl m-4 rounded-lg p-4 bg-white" :comment="comment" v-for="comment in faerie.comments.filter((c) => c.parent_id == null)"></Comment>
         <br>
+        <div class="text-center text-2xl font-bold mb-4">There may be other faeries nearby</div>
+
+        <Map :staticMarkers="staticMarkers"/>
+
     </div>
 
 
@@ -93,6 +97,7 @@ import {useForm} from "@inertiajs/inertia-vue3";
 import Textarea from "@/Components/Textarea.vue";
 import {ref} from "vue";
 import Comment from "@/Components/Comment.vue";
+import Map from "@/Components/Map.vue";
 
 const comments = ref(null)
 
@@ -130,6 +135,7 @@ const form = useForm({
     name: '',
     message: ''
 })
+
 const props = defineProps({
     faerie: Object,
     profanity: Boolean,
@@ -143,6 +149,15 @@ if (props.old){
     form.message = props.old.message;
 }
 
+const staticMarkers = [
+    {
+        position: {
+            lat: props.faerie.latitude,
+            lng: props.faerie.longitude,
+        },
+        image: props.faerie.image_url
+    }
+]
 
 function submit() {
     form.post(route('leave-comment', props.faerie.uuid), {
