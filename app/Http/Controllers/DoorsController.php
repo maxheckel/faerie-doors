@@ -89,7 +89,9 @@ class DoorsController extends Controller
         if ($faerie->user_id != Auth::id()){
             abort(403);
         }
-
+        return Inertia::render('Doors/CreateEdit', [
+            'faerie' => $faerie
+        ]);
     }
 
     public function getPublic(Request $request, $slug){

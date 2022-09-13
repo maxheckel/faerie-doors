@@ -68,7 +68,6 @@ function showPosition(position) {
             const map = new google.maps.Map(document.getElementById("map"), mapOptions);
             if (props.clickable){
                 google.maps.event.addListener(map, "click", (event) => {
-                    console.log(event.latLng)
                     addMarker(event.latLng, map, google);
                 });
 
@@ -76,7 +75,6 @@ function showPosition(position) {
 
             if (props.staticMarkers.length > 0){
                 for(let x = 0; x < props.staticMarkers.length; x++){
-                    console.log(props.staticMarkers[x])
                     props.staticMarkers[x].icon = {
                         url: props.staticMarkers[x].image,
                         // This marker is 20 pixels wide by 32 pixels high.
@@ -90,7 +88,6 @@ function showPosition(position) {
                         coords: [25, 25, 25],
                         type: "circle"
                     }
-                    console.log(props.staticMarkers[x])
                     const marker = new google.maps.Marker(props.staticMarkers[x])
                     marker.setMap(map)
                 }
@@ -115,6 +112,14 @@ function addMarker(latlng, map, google) {
 
     const marker = new google.maps.Marker({
         position: latlng
+    })
+    marker.addListener('click', function(){
+
+        emit('latChanged', null)
+        emit('lngChanged', null)
+        for (let x = 0; x < existingMarkers.length; x++) {
+            existingMarkers[x].setMap(null);
+        }
     })
     marker.setMap(map)
     for (let x = 0; x < existingMarkers.length; x++) {
