@@ -52,7 +52,7 @@ if (navigator.geolocation) {
 }
 
 
-
+let locationMarker = null;
 function showPosition(position) {
     data.mapLoaded = true;
     mapOptions.center.lat = position.coords.latitude
@@ -92,6 +92,39 @@ function showPosition(position) {
                     marker.setMap(map)
                 }
             }
+
+            locationMarker = new google.maps.Marker({
+                position: mapOptions.center,
+                icon: {
+                    url: '/img/location.png',
+                    scaledSize: new google.maps.Size(10, 10),
+                    anchor: new google.maps.Point(5, 5),
+                }
+            })
+
+            locationMarker.setMap(map)
+
+            setInterval(function(){
+
+                navigator.geolocation.getCurrentPosition(function (position){
+                    console.log('running')
+                    locationMarker.setMap(null)
+                    locationMarker = new google.maps.Marker({
+                        position: {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        },
+                        icon: {
+                            url: '/img/location.png',
+                            scaledSize: new google.maps.Size(10, 10),
+                            anchor: new google.maps.Point(5, 5),
+                        }
+                    })
+
+                    locationMarker.setMap(map)
+                }, );
+            }, 30000)
+
 
 
 
