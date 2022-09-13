@@ -73,12 +73,17 @@
             </form>
         </AuthenticationCard>
         <img :src="randomImage()" class="w-1/4 py-8 relative mx-auto">
-        <div class="text-2xl text-center" v-if="faerie.comments.length > 0">Other Messages:</div>
+        <div v-if="faerie.comments.length > 0">
+        <div class="text-2xl text-center" >Other Messages:</div>
         <Comment class="text-2xl m-4 rounded-lg p-4 bg-white" :comment="comment" v-for="comment in faerie.comments.filter((c) => c.parent_id == null)"></Comment>
-        <br>
+        <img :src="randomImage()" class="w-1/4 py-8 relative mx-auto">
+        </div>
         <div class="text-center text-2xl font-bold mb-4">There may be other faeries nearby</div>
 
-        <Map :staticMarkers="staticMarkers"/>
+        <div class="p-4 pb-10">
+            <Map class="" :staticMarkers="staticMarkers"/>
+        </div>
+
 
     </div>
 
@@ -138,6 +143,7 @@ const form = useForm({
 
 const props = defineProps({
     faerie: Object,
+    otherFaeries: Array,
     profanity: Boolean,
     messageSent: Boolean,
     old: Object
@@ -156,8 +162,18 @@ const staticMarkers = [
             lng: props.faerie.longitude,
         },
         image: props.faerie.image_url
-    }
+    },
+    ...props.otherFaeries.map((faerie) => {
+        return {
+            position: {
+                lat: faerie.latitude,
+                lng: faerie.longitude,
+            }
+        }
+    })
 ]
+
+
 
 function submit() {
     form.post(route('leave-comment', props.faerie.uuid), {

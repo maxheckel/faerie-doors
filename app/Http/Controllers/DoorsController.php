@@ -97,11 +97,19 @@ class DoorsController extends Controller
             return $q->where('public', true)->orderBy('created_at', 'desc');
         }, 'comments.comments'])->firstOrFail();
 
+        $maxDistance = 0.02;
+        $otherFaeries = Faerie::where(function ($q) use ($faerie, $maxDistance){
+            $q->where('latitude', '>=', $faerie->latitude-$maxDistance)->orWhere('latitude', '<=', $faerie->latitude+$maxDistance);
+        })->where(function ($q) use ($faerie, $maxDistance){
+            $q->where('longitude', '>=', $faerie->longitude-$maxDistance)->orWhere('longitude', '<=', $faerie->longitude+$maxDistance);
+        })->where('id', '!=', $faerie->id)->get();
+
         return Inertia::render('Doors/Public', [
             'faerie' => $faerie,
             'profanity' => Session::get('profanity'),
             'messageSent' => Session::get('messageSent'),
-            'old' => $request->old()
+            'old' => $request->old(),
+            'otherFaeries' => $otherFaeries
         ]);
     }
 
