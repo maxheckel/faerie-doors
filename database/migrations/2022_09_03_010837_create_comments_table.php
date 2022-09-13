@@ -18,9 +18,10 @@ return new class extends Migration
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->boolean('is_faerie');
             $table->foreignIdFor(Faerie::class);
             $table->text('comment');
-            $table->string('email');
+            $table->string('email')->nullable();
             $table->string('name');
             $table->boolean('public')->default(false);
             $table->foreignIdFor(Comment::class, 'parent_id')->nullable();

@@ -3,29 +3,32 @@
         <div class="w-full h-80 bg-cover bg-center" :style="{'background-image': randomCover()}"></div>
 
         <div class="relative lg:w-1/6 w-1/2 mx-auto -mt-60">
-            <Portrait :image_url="props.faerie.image_url"></Portrait>
+            <Portrait :image_url="faerie.image_url"></Portrait>
         </div>
         <div class="text-2xl mt-8 text-center">
-            You've found the home of {{ props.faerie.name }}!<br>
-            <Button class="bg-amber-800 block" @click="goto('comment')">Leave {{ props.faerie.name }} a message</Button>
+            You've found the home of {{ faerie.name }}!<br>
+            <Button class="bg-amber-800 block" @click="goto('comment')">Leave {{ faerie.name }} a message</Button>
         </div>
         <div class="mt-4 p-4 text-2xl font-bold bg-amber-50 m-8 rounded-lg">
-            <BigFirstLetter>{{ props.faerie.bio }}</BigFirstLetter>
+            <BigFirstLetter>{{ faerie.bio }}</BigFirstLetter>
         </div>
         <img :src="randomImage()" class="w-1/4 mb-8 relative mx-auto">
         <AuthenticationCard class="overflow-hidden bg-amber-100">
             <div class="text-2xl font-bold" ref="comments">
-                Leave a message for {{ props.faerie.name }}
+                Leave a message for {{ faerie.name }}
             </div>
             <div v-if="props.profanity" class="text-red-500 font-bold">
                 Do not use profanity in your messages, faeries don't like swearies
+            </div>
+            <div v-if="props.messageSent" class="text-emerald-500 font-bold">
+                {{faerie.name}} has received your message!
             </div>
             <form @submit.prevent="submit">
 
                 <div>
                     <label class="font-bold text-lg">Email
                         <span
-                            class="text-xs block">*Will be used to alert you when {{ props.faerie.name }} replies.</span>
+                            class="text-xs block">*Will be used to alert you when {{ faerie.name }} replies.</span>
                     </label>
                     <JetInput
                         id="email"
@@ -70,6 +73,9 @@
             </form>
         </AuthenticationCard>
         <img :src="randomImage()" class="w-1/4 py-8 relative mx-auto">
+        <div class="text-2xl text-center">Other Messages:</div>
+        <Comment class="text-2xl m-4 rounded-lg p-4 bg-white" :comment="comment" v-for="comment in faerie.comments.filter((c) => c.parent_id == null)"></Comment>
+        <br>
     </div>
 
 
@@ -86,6 +92,7 @@ import JetLabel from '@/Components/Label.vue';
 import {useForm} from "@inertiajs/inertia-vue3";
 import Textarea from "@/Components/Textarea.vue";
 import {ref} from "vue";
+import Comment from "@/Components/Comment.vue";
 
 const comments = ref(null)
 
@@ -126,6 +133,7 @@ const form = useForm({
 const props = defineProps({
     faerie: Object,
     profanity: Boolean,
+    messageSent: Boolean,
     old: Object
 })
 
@@ -134,6 +142,7 @@ if (props.old){
     form.name = props.old.name;
     form.message = props.old.message;
 }
+
 
 function submit() {
     form.post(route('leave-comment', props.faerie.uuid), {

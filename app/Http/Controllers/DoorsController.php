@@ -93,10 +93,14 @@ class DoorsController extends Controller
     }
 
     public function getPublic(Request $request, $slug){
-        $faerie = Faerie::where('uuid', $slug)->firstOrFail();
+        $faerie = Faerie::where('uuid', $slug)->with(['comments' => function($q){
+            return $q->where('public', true)->orderBy('created_at', 'desc');
+        }, 'comments.comments'])->firstOrFail();
+
         return Inertia::render('Doors/Public', [
             'faerie' => $faerie,
             'profanity' => Session::get('profanity'),
+            'messageSent' => Session::get('messageSent'),
             'old' => $request->old()
         ]);
     }
@@ -121,6 +125,8 @@ class DoorsController extends Controller
         $comment->email = $request->get('email');
         $comment->comment = $request->get('message');
         $comment->faerie_id = $faerie->id;
+        $comment->save();
 
+        return redirect()->back()->with('messageSent', true);
     }
 }
