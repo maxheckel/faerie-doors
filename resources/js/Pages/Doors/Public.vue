@@ -77,7 +77,6 @@
     import AuthenticationCard from "@/Components/AuthenticationCard.vue";
     import JetInput from '@/Components/Input.vue';
     import JetInputError from '@/Components/InputError.vue';
-    import JetCheckbox from '@/Components/Checkbox.vue';
     import JetLabel from '@/Components/Label.vue';
     import {useForm} from "@inertiajs/inertia-vue3";
     import Textarea from "@/Components/Textarea.vue";
