@@ -6,22 +6,26 @@
             <Portrait :image_url="props.faerie.image_url"></Portrait>
         </div>
         <div class="text-2xl mt-8 text-center">
-            You've found the home of {{props.faerie.name}}!<br>
-            <Button class="bg-amber-800 block" @click="goto('comment')">Leave {{props.faerie.name}} a message</Button>
+            You've found the home of {{ props.faerie.name }}!<br>
+            <Button class="bg-amber-800 block" @click="goto('comment')">Leave {{ props.faerie.name }} a message</Button>
         </div>
         <div class="mt-4 p-4 text-2xl font-bold bg-amber-50 m-8 rounded-lg">
-            <BigFirstLetter>{{props.faerie.bio}}</BigFirstLetter>
+            <BigFirstLetter>{{ props.faerie.bio }}</BigFirstLetter>
         </div>
         <img :src="randomImage()" class="w-1/4 mb-8 relative mx-auto">
         <AuthenticationCard class="overflow-hidden bg-amber-100">
             <div class="text-2xl font-bold" ref="comments">
-                Leave a message for {{props.faerie.name}}
+                Leave a message for {{ props.faerie.name }}
+            </div>
+            <div v-if="props.profanity" class="text-red-500 font-bold">
+                Do not use profanity in your messages, faeries don't like swearies
             </div>
             <form @submit.prevent="submit">
 
                 <div>
                     <label class="font-bold text-lg">Email
-                        <span class="text-xs block">*Will be used to alert you when {{props.faerie.name}} replies.</span>
+                        <span
+                            class="text-xs block">*Will be used to alert you when {{ props.faerie.name }} replies.</span>
                     </label>
                     <JetInput
                         id="email"
@@ -30,11 +34,11 @@
                         class="mt-1 block w-full"
                         required
                     />
-                    <JetInputError class="mt-2" :message="form.errors.email" />
+                    <JetInputError class="mt-2" :message="form.errors.email"/>
                 </div>
 
                 <div>
-                    <JetLabel for="name" value="Name" />
+                    <JetLabel for="name" value="Name"/>
                     <JetInput
                         id="name"
                         v-model="form.name"
@@ -42,23 +46,24 @@
                         class="mt-1 block w-full"
                         required
                     />
-                    <JetInputError class="mt-2" :message="form.errors.email" />
+                    <JetInputError class="mt-2" :message="form.errors.email"/>
                 </div>
                 <div class="mt-4">
-                    <JetLabel for="message" value="Message" />
+                    <JetLabel for="message" value="Message"/>
                     <Textarea
                         id="message"
                         v-model="form.message"
                         class="mt-1 block w-full"
                         required
                     />
-                    <JetInputError class="mt-2" :message="form.errors.message" />
+                    <JetInputError class="mt-2" :message="form.errors.message"/>
                 </div>
 
                 <div class="flex items-center justify-end mt-4">
 
 
-                    <Button class="ml-4 w-full text-center items-center py-2 text-2xl bg-amber-800" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                    <Button class="ml-4 w-full text-center items-center py-2 text-2xl bg-amber-800"
+                            :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                         Save
                     </Button>
                 </div>
@@ -71,58 +76,76 @@
 </template>
 
 <script setup>
-    import Portrait from "@/Components/Portrait.vue";
-    import BigFirstLetter from "@/Components/BigFirstLetter.vue";
-    import Button from "@/Components/Button.vue";
-    import AuthenticationCard from "@/Components/AuthenticationCard.vue";
-    import JetInput from '@/Components/Input.vue';
-    import JetInputError from '@/Components/InputError.vue';
-    import JetLabel from '@/Components/Label.vue';
-    import {useForm} from "@inertiajs/inertia-vue3";
-    import Textarea from "@/Components/Textarea.vue";
-    import {ref} from "vue";
+import Portrait from "@/Components/Portrait.vue";
+import BigFirstLetter from "@/Components/BigFirstLetter.vue";
+import Button from "@/Components/Button.vue";
+import AuthenticationCard from "@/Components/AuthenticationCard.vue";
+import JetInput from '@/Components/Input.vue';
+import JetInputError from '@/Components/InputError.vue';
+import JetLabel from '@/Components/Label.vue';
+import {useForm} from "@inertiajs/inertia-vue3";
+import Textarea from "@/Components/Textarea.vue";
+import {ref} from "vue";
 
-    const comments = ref(null)
-    function goto() {
-        var top = comments.value.offsetTop;
+const comments = ref(null)
 
-        window.scrollTo(0, top);
-    }
-    function randomCover(){
-        const num = 1+Math.floor(Math.random() * 52);
-        return "linear-gradient(to bottom, rgba(245, 246, 252, 0), rgba(254, 241, 192, 0.7)), url('/img/covers/"+num+".jpg')";
-    }
+function goto() {
+    var top = comments.value.offsetTop;
+
+    window.scrollTo(0, top);
+}
+
+function randomCover() {
+    const num = 1 + Math.floor(Math.random() * 52);
+    return "linear-gradient(to bottom, rgba(245, 246, 252, 0), rgba(254, 241, 192, 0.7)), url('/img/covers/" + num + ".jpg')";
+}
 
 
-    function randomImage(){
-        const items = [
-            '/img/mushrooms.webp',
-            '/img/mouse.webp',
-            '/img/leaf.webp',
-            '/img/frog.webp',
-            '/img/leafy.webp',
-            '/img/mush-with-books.webp',
-            '/img/stump.webp',
-            '/img/rock.webp',
-            '/img/sidebranch.webp',
-            '/img/mushroom.webp',
-            '/img/logo.png'
-        ]
-        return items[Math.floor(Math.random()*items.length)];
-    }
+function randomImage() {
+    const items = [
+        '/img/mushrooms.webp',
+        '/img/mouse.webp',
+        '/img/leaf.webp',
+        '/img/frog.webp',
+        '/img/leafy.webp',
+        '/img/mush-with-books.webp',
+        '/img/stump.webp',
+        '/img/rock.webp',
+        '/img/sidebranch.webp',
+        '/img/mushroom.webp',
+        '/img/logo.png'
+    ]
+    return items[Math.floor(Math.random() * items.length)];
+}
 
-    const form = useForm({
-        email: '',
-        name: '',
-        message: ''
+const form = useForm({
+    email: '',
+    name: '',
+    message: ''
+})
+const props = defineProps({
+    faerie: Object,
+    profanity: Boolean,
+    old: Object
+})
+
+if (props.old){
+    form.email = props.old.email;
+    form.name = props.old.name;
+    form.message = props.old.message;
+}
+
+function submit() {
+    form.post(route('leave-comment', props.faerie.uuid), {
+        preserveScroll: true,
+        preserveState: false,
+        onFinish: (data) => {
+            console.log(data);
+        }
+    }, {
+        resetOnSuccess: false,
     })
-  const props = defineProps({
-      faerie: Object
-  })
-
-    function submit(){
-        form.post(route('leave-comment', props.faerie.uuid))
-    }
+}
 </script>
 
 <style scoped>

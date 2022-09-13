@@ -14,7 +14,6 @@ for (let x = 0; x < 2 + getRandomInt(10); x++){
     })
 }
 
-console.log(mushrooms.data)
 
 </script>
 

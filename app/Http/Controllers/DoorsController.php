@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comment;
 use App\Models\Faerie;
 use App\Models\FaerieTemplate;
 use App\Models\Locale;
 use App\Services\AI;
 use App\Services\Geocoding;
+use App\Services\Profanity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -60,13 +62,13 @@ class DoorsController extends Controller
         }
         $locale = Locale::where('name', $localeName)->where('state', $state)->firstOrCreate();
         $template = FaerieTemplate::find($request->get('template_id'));
-        $censor = new CensorWords();
+
         $faerie = new Faerie();
         $faerie->faerie_template_id = $request->get('template_id');
-        $bio = $censor->censorString($request->get('newBio'));
-        if (isset($bio['matched']) && count($bio['matched']) > 0){
-            $request->request->set('newBio', $bio['clean']);
-            $request->request->set('bio', $bio['clean']);
+        $profanityCheck = Profanity::hasProfanity($request->get('newBio'));
+        if ($profanityCheck !== null){
+            $request->request->set('newBio', $profanityCheck);
+            $request->request->set('bio', $profanityCheck);
             return redirect()->back()->withInput($request->all())->with('profanity', true);
         }
         $faerie->bio = $request->get('newBio');
@@ -91,9 +93,34 @@ class DoorsController extends Controller
     }
 
     public function getPublic(Request $request, $slug){
-        $faerie = Faerie::where('uuid', $slug)->first();
+        $faerie = Faerie::where('uuid', $slug)->firstOrFail();
         return Inertia::render('Doors/Public', [
-            'faerie' => $faerie
+            'faerie' => $faerie,
+            'profanity' => Session::get('profanity'),
+            'old' => $request->old()
         ]);
+    }
+
+    public function postComment(Request $request, $slug){
+        $faerie = Faerie::where('uuid', $slug)->firstOrFail();
+        $message = Profanity::hasProfanity($request->get('message'));
+        $name = Profanity::hasProfanity($request->get('name'));
+        if ($message !== null || $name !== null){
+            if ($message !== null){
+                $request->request->set('message', $message);
+            }
+            if ($name !== null){
+                $request->request->set('name', $name);
+            }
+
+            return redirect()->back()->withInput($request->all())->with('profanity', true);
+        }
+
+        $comment = new Comment();
+        $comment->name = $request->get('name');
+        $comment->email = $request->get('email');
+        $comment->comment = $request->get('message');
+        $comment->faerie_id = $faerie->id;
+
     }
 }
