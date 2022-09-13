@@ -41,8 +41,10 @@ const mapOptions = {
 
 
 const props = defineProps({
-    template: Object
+    template: Object,
+    profanity: Boolean
 })
+console.log(props.profanity)
 
 form.name = props.template.name;
 form.bio = props.template.bio;
@@ -129,7 +131,12 @@ function saveNewBio(){
 }
 
 function submit() {
-    form.post(route('doors.store'))
+    form.post(route('doors.store'), {
+        preserveScroll: false,
+        preserveState: false
+    }, {
+        resetOnSuccess: false,
+    })
 }
 
 </script>
@@ -153,6 +160,9 @@ function submit() {
                         <a @click="newName()" class="underline block text-md mt-8 cursor-pointer">Or...maybe that isn't
                             their name?</a>
                     </div>
+                    <div class="font-bold text-2xl text-red-500" v-if="props.profanity">
+                        Please do not use profanity in your translations, faeries don't like swearies.
+                    </div>
 
                     <div class="md:grid md:grid-cols-[30%_70%] gap-4 relative pr-4 z-0">
                         <div class="relative md:w-full w-1/2 mx-auto">
@@ -161,12 +171,9 @@ function submit() {
                         </div>
                         <div class="bg-amber-100 p-4 rounded-lg text-4xl mt-4 p-8">
                             <div class="w-[90px] h-[50px] float-right inline-block font-serif"></div>
-                            <span v-if="data.bioLoaded"
-                                  class="text-xl"> Your mind buzzes as you translate the faerie introduces themselves:</span>
                             <span class="text-8xl block -mb-16" v-if="data.bioLoaded">"</span>
-                            <BigFirstLetter v-if="data.bioLoaded && !data.manuallyEditing" class="block">{{
-                                    form.bio
-                                }}
+                            <BigFirstLetter v-if="data.bioLoaded && !data.manuallyEditing" class="block">
+                                {{ form.bio }}
                             </BigFirstLetter>
                             <div v-if="data.manuallyEditing">
                                 <Textarea class="w-full h-60 text-2xl" v-model="form.newBio"></Textarea>

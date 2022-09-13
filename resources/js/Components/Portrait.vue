@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <img class="z-0 mx-auto w-4/5 mt-[20%] relative rounded-xl rounded"
+    <div class="pt-[20%]">
+        <img class="z-0 mx-auto w-4/5 relative rounded-xl rounded"
              :src="props.image_url">
         <img src="/img/frame.webp" class="absolute top-0 float-left z-10">
     </div>

@@ -9,8 +9,11 @@ use App\Services\AI;
 use App\Services\Geocoding;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
+
 use Ramsey\Uuid\Uuid;
+use Snipe\BanBuilder\CensorWords;
 
 class DoorsController extends Controller
 {
@@ -19,16 +22,26 @@ class DoorsController extends Controller
     {
     }
 
-    public function create(){
-        $template = FaerieTemplate::whereDoesntHave('faeries', function ($q){
-            return $q->where('locale_id', Auth::user()->locale_id);
-        })->inRandomOrder()->first();
-        if ($template->bio == null){
-            $template->bio = $this->aiService->getBio($template->name);
-            $template->save();
+    public function create(Request $request){
+
+        if (Session::has('profanity') && Session::get('profanity') === true){
+            $template = FaerieTemplate::find($request->old('template_id'));
+            $template->bio = $request->old('bio');
+            $template->name = $request->old('name');
+        } else {
+            $template = FaerieTemplate::whereDoesntHave('faeries', function ($q){
+                return $q->where('locale_id', Auth::user()->locale_id);
+            })->inRandomOrder()->first();
+            if ($template->bio == null){
+                $template->bio = $this->aiService->getBio($template->name);
+                $template->save();
+            }
         }
+
+
         return Inertia::render('Doors/CreateEdit', [
-            'template'=>$template
+            'template'=>$template,
+            'profanity' => Session::get('profanity')
         ]);
     }
 
@@ -47,9 +60,15 @@ class DoorsController extends Controller
         }
         $locale = Locale::where('name', $localeName)->where('state', $state)->firstOrCreate();
         $template = FaerieTemplate::find($request->get('template_id'));
+        $censor = new CensorWords();
         $faerie = new Faerie();
         $faerie->faerie_template_id = $request->get('template_id');
-        $faerie->bio = $request->get('newBio');
+        $bio = $censor->censorString($request->get('newBio'));
+        if (isset($bio['matched']) && count($bio['matched']) > 0){
+            $request->request->set('newBio', $bio['clean']);
+            $request->request->set('bio', $bio['clean']);
+            return redirect()->back()->withInput($request->all())->with('profanity', true);
+        }
         $faerie->latitude = $request->get('latitude');
         $faerie->longitude = $request->get('longitude');
         $faerie->name = $request->get('name');
