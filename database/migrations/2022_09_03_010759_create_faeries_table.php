@@ -19,8 +19,8 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->uuid();
-            $table->float('latitude')->nullable();
-            $table->float('longitude')->nullable();
+            $table->float('latitude', 18, 12)->nullable();
+            $table->float('longitude', 18, 12)->nullable();
             $table->string('name');
             $table->string('image_url')->nullable();
             $table->text('bio')->nullable();

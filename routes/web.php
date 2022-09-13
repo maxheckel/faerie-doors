@@ -36,4 +36,4 @@ Route::middleware([
 
 });
 Route::get('/faerie/{slug}', [DoorsController::class, 'getPublic'])->name('doors.public');
-
+Route::post('/faerie/{slug}', [DoorsController::class, 'postComment'])->name('leave-comment');

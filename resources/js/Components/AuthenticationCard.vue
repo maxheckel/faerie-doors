@@ -19,7 +19,7 @@ console.log(mushrooms.data)
 </script>
 
 <template>
-    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-amber-50">
+    <div class="flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-amber-50">
         <div>
             <slot name="logo"/>
         </div>
@@ -35,15 +35,15 @@ console.log(mushrooms.data)
 
 
 
-        <img src="/img/arch.webp" class="sm:max-w-2xl" style="margin-left: -40px; margin-bottom: -230px; ">
+        <img src="/img/arch.webp" class="max-w-xl sm:max-w-2xl" style="margin-left: -40px; margin-bottom: -230px; ">
 
-        <div class="forest w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg z-10">
+        <div class="forest p-8 w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg z-10">
             <div class="z-20">
                 <slot/>
             </div>
 
         </div>
-        <img src="/img/arch.webp" class="sm:max-w-2xl bottom-arch">
+        <img src="/img/arch.webp" class="max-w-xl sm:max-w-2xl bottom-arch">
     </div>
 </template>
 
