@@ -27,7 +27,7 @@ console.log(mushrooms.data)
 
 
 
-        <div class="sm:max-w-2xl z-20">
+        <div class="hidden sm:visible sm:max-w-2xl z-20">
             <img v-for="mush in mushrooms.data" :style="{width: mush.width+'px', 'margin-left': mush.margin+'px', transform: getRandomInt(10) % 2 === 0 ? 'rotateY(180deg)' : '' + ' rotateX('+getRandomInt(20)+'px)'}" src="/img/mushroom.webp" class="mushroom">
 
         </div>

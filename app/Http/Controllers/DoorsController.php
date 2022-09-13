@@ -69,6 +69,7 @@ class DoorsController extends Controller
             $request->request->set('bio', $bio['clean']);
             return redirect()->back()->withInput($request->all())->with('profanity', true);
         }
+        $faerie->bio = $request->get('newBio');
         $faerie->latitude = $request->get('latitude');
         $faerie->longitude = $request->get('longitude');
         $faerie->name = $request->get('name');
@@ -90,7 +91,7 @@ class DoorsController extends Controller
     }
 
     public function getPublic(Request $request, $slug){
-        $faerie = Faerie::where('uuid', $slug);
+        $faerie = Faerie::where('uuid', $slug)->first();
         return Inertia::render('Doors/Public', [
             'faerie' => $faerie
         ]);

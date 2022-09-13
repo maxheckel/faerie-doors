@@ -33,5 +33,7 @@ Route::middleware([
 ])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('doors', DoorsController::class);
-    Route::get('/faerie/{slug}', [DoorsController::class, 'getPublic'])->name('doors.public');
+
 });
+Route::get('/faerie/{slug}', [DoorsController::class, 'getPublic'])->name('doors.public');
+

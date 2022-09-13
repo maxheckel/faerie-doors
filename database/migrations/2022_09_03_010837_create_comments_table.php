@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Comment;
 use App\Models\Faerie;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -18,6 +19,11 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->foreignIdFor(Faerie::class);
+            $table->text('comment');
+            $table->string('email');
+            $table->string('name');
+            $table->boolean('public')->default(false);
+            $table->foreignIdFor(Comment::class, 'parent_id')->nullable();
         });
     }
 

@@ -11,7 +11,7 @@ const firstChar = slots.default()[0].children[0]
             <img src="/img/sidebranch.webp" class="w-[50px] absolute left-0 top-0 z-0">
             <img src="/img/mushrooms.webp" class="w-[30px] absolute -right-2 bottom-6 z-20">
         </span>
-        <span v-html="slots.default()[0].children.substring(1)"></span>
+        <span style="white-space: pre-wrap;" v-html="slots.default()[0].children.substring(1)"></span>
     </p>
 
 </template>
