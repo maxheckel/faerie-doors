@@ -217,6 +217,9 @@ const logout = () => {
                         <JetResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
                             Dashboard
                         </JetResponsiveNavLink>
+                        <JetResponsiveNavLink :href="route('doors.create')" :active="route().current('doors.create')">
+                            New Door
+                        </JetResponsiveNavLink>
                     </div>
 
                     <!-- Responsive Settings Options -->
