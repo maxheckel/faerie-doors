@@ -3,7 +3,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import {useForm} from "@inertiajs/inertia-vue3";
 import BigFirstLetter from "@/Components/BigFirstLetter.vue";
 import {reactive} from "vue";
-import QrcodeVue from 'qrcode.vue'
+
 
 import Button from "@/Components/Button.vue";
 import Textarea from "@/Components/Textarea.vue";
@@ -137,10 +137,7 @@ function submit() {
                     <div class="md:grid md:grid-cols-[30%_70%] gap-4 relative pr-4 z-0">
                         <div class="relative md:w-full w-1/2 mx-auto">
                             <Portrait :image_url="data.faerieImage"/>
-                            <a v-if="faerie != null" class="relative mx-auto mt-10 w-[100px] block text-center">
-                                <QrcodeVue class="" :value="route('doors.public', faerie.uuid)" :size="100" :level="'H'"></QrcodeVue>
-                                <a class="text-center relative" :href="route('qr', faerie.uuid)">Print</a>
-                            </a>
+
                             <a v-if="faerie == null" class="block underline mt-20 cursor-pointer" href="/doors/create">Maybe a new faerie?</a>
                         </div>
                         <div class="bg-amber-100 p-4 rounded-lg text-4xl mt-4 p-8">

@@ -1,6 +1,6 @@
 <template>
     <div class="bg-amber-100 h-full">
-        <div class="w-full h-80 bg-cover bg-center" :style="{'background-image': randomCover()}"></div>
+        <div class="w-full h-80 bg-cover bg-center  rounded-bl-2xl rounded-br-2xl" :style="{'background-image': randomCover()}"></div>
 
         <div class="relative lg:w-1/6 w-1/2 mx-auto -mt-60">
             <Portrait :image_url="faerie.image_url"></Portrait>

@@ -21,4 +21,8 @@ class Comment extends Model
         return $date->format('m/d/Y h:i a');
     }
 
+    public function faerie(){
+        return $this->belongsTo(Faerie::class);
+    }
+
 }

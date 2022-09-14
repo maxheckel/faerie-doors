@@ -9,6 +9,7 @@ use App\Models\Locale;
 use App\Services\AI;
 use App\Services\Geocoding;
 use App\Services\Profanity;
+use App\Services\Weather;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -20,7 +21,7 @@ use Snipe\BanBuilder\CensorWords;
 class DoorsController extends Controller
 {
 
-    public function __construct(private AI $aiService)
+    public function __construct(private AI $aiService, private Weather $weatherService)
     {
     }
 
@@ -85,6 +86,30 @@ class DoorsController extends Controller
     }
 
     public function show(Request $request, $id){
+        $faerie = Faerie::where('id', $id)->with(['comments' => function($q){
+            return $q->where('public', true)->orderBy('created_at', 'desc');
+        }, 'comments.comments'])->firstOrFail();
+        if ($faerie->user_id != Auth::id()){
+            abort(403);
+        }
+//        $this->weatherService->getCurrentWeather($faerie->latitude, $faerie->longitude);
+        $maxDistance = 0.02;
+        $otherFaeries = Faerie::where(function ($q) use ($faerie, $maxDistance){
+            $q->where('latitude', '>=', $faerie->latitude-$maxDistance)->orWhere('latitude', '<=', $faerie->latitude+$maxDistance);
+        })->where(function ($q) use ($faerie, $maxDistance){
+            $q->where('longitude', '>=', $faerie->longitude-$maxDistance)->orWhere('longitude', '<=', $faerie->longitude+$maxDistance);
+        })->where('id', '!=', $faerie->id)->get();
+
+        return Inertia::render('Doors/View', [
+            'faerie' => $faerie,
+            'profanity' => Session::get('profanity'),
+            'messageSent' => Session::get('messageSent'),
+            'old' => $request->old(),
+            'otherFaeries' => $otherFaeries
+        ]);
+    }
+
+    public function edit(Request $request, $id){
         $faerie = Faerie::find($id);
         if ($faerie->user_id != Auth::id()){
             abort(403);
@@ -115,28 +140,4 @@ class DoorsController extends Controller
         ]);
     }
 
-    public function postComment(Request $request, $slug){
-        $faerie = Faerie::where('uuid', $slug)->firstOrFail();
-        $message = Profanity::hasProfanity($request->get('message'));
-        $name = Profanity::hasProfanity($request->get('name'));
-        if ($message !== null || $name !== null){
-            if ($message !== null){
-                $request->request->set('message', $message);
-            }
-            if ($name !== null){
-                $request->request->set('name', $name);
-            }
-
-            return redirect()->back()->withInput($request->all())->with('profanity', true);
-        }
-
-        $comment = new Comment();
-        $comment->name = $request->get('name');
-        $comment->email = $request->get('email');
-        $comment->comment = $request->get('message');
-        $comment->faerie_id = $faerie->id;
-        $comment->save();
-
-        return redirect()->back()->with('messageSent', true);
-    }
 }

@@ -1,8 +1,7 @@
 <template>
     <div class="map relative">
         <div v-if="data.mapLoaded" class="w-full py-4" style="height: 400px" id="map"></div>
-        <div v-if="data.mapLoaded" class="w-full absolute top-0"
-             style="pointer-events: none; height: 400px;background: rgb(2,0,36); background: radial-gradient(circle, rgba(2,0,36,0) 70%, rgba(195,134,99,1) 100%);"></div>
+<!--        <div v-if="data.mapLoaded" class="w-full absolute top-0" style="pointer-events: none; height: 400px;background: rgb(2,0,36); background: radial-gradient(circle, rgba(2,0,36,0) 70%, rgba(195,134,99,1) 100%);"></div>-->
         <img v-if="data.mapLoaded" src="/img/mouse.webp" class="absolute w-32 -bottom-10 md:-left-4 md:w-40">
 
         <div v-if="!data.mapLoaded" class="w-full text-center py-10">
@@ -82,19 +81,22 @@ function showPosition(position) {
 
             if (props.staticMarkers.length > 0){
                 for(let x = 0; x < props.staticMarkers.length; x++){
-                    props.staticMarkers[x].icon = {
-                        url: props.staticMarkers[x].image,
-                        // This marker is 20 pixels wide by 32 pixels high.
-                        scaledSize: new google.maps.Size(40, 62),
-                        // The origin for this image is (0, 0).
-                        origin: new google.maps.Point(0, 0),
-                        // The anchor for this image is the base of the flagpole at (0, 32).
-                        anchor: new google.maps.Point(20, 32),
-                    };
-                    props.staticMarkers[x].shape = {
-                        coords: [25, 25, 25],
-                        type: "circle"
+                    if (props.staticMarkers[x].image){
+                        props.staticMarkers[x].icon = {
+                            url: props.staticMarkers[x].image,
+                            // This marker is 20 pixels wide by 32 pixels high.
+                            scaledSize: new google.maps.Size(40, 62),
+                            // The origin for this image is (0, 0).
+                            origin: new google.maps.Point(0, 0),
+                            // The anchor for this image is the base of the flagpole at (0, 32).
+                            anchor: new google.maps.Point(20, 32),
+                        };
+                        props.staticMarkers[x].shape = {
+                            coords: [25, 25, 25],
+                            type: "circle"
+                        }
                     }
+
                     const marker = new google.maps.Marker(props.staticMarkers[x])
                     marker.setMap(map)
                 }

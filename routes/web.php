@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DoorsController;
 use Illuminate\Foundation\Application;
@@ -42,4 +43,5 @@ Route::middleware([
 
 });
 Route::get('/faerie/{slug}', [DoorsController::class, 'getPublic'])->name('doors.public');
-Route::post('/faerie/{slug}', [DoorsController::class, 'postComment'])->name('leave-comment');
+Route::post('/faerie/{slug}', [CommentController::class, 'createComment'])->name('leave-comment');
+Route::post('/comments/{id}', [CommentController::class, 'createReply'])->name('leave-reply');
