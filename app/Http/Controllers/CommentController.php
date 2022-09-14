@@ -28,6 +28,7 @@ class CommentController extends Controller
         $comment = new Comment();
         $comment->name = $request->get('name');
         $comment->email = $request->get('email');
+        $comment->is_faerie = false;
         $comment->comment = $request->get('message');
         $comment->faerie_id = $faerie->id;
         $comment->save();
@@ -52,6 +53,7 @@ class CommentController extends Controller
         $comment->comment = $request->get('message');
         $comment->faerie_id = $parentComment->faerie_id;
         $comment->parent_id = $parentComment->id;
+        $comment->is_faerie = true;
         $comment->name = $parentComment->faerie->name;
         $comment->save();
 
