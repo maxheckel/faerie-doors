@@ -1,4 +1,9 @@
 <template>
+
+    <Head>
+        <title>{{faerie.name}}</title>
+        <meta name="description" :content="faerie.bio">
+    </Head>
     <div class="bg-amber-100 h-full">
         <div class="w-full h-80 bg-cover bg-center  rounded-bl-2xl rounded-br-2xl" :style="{'background-image': randomCover()}"></div>
 
@@ -99,7 +104,7 @@ import AuthenticationCard from "@/Components/AuthenticationCard.vue";
 import JetInput from '@/Components/Input.vue';
 import JetInputError from '@/Components/InputError.vue';
 import JetLabel from '@/Components/Label.vue';
-import {useForm} from "@inertiajs/inertia-vue3";
+import {useForm, Head} from "@inertiajs/inertia-vue3";
 import Textarea from "@/Components/Textarea.vue";
 import {ref} from "vue";
 import Comment from "@/Components/Comment.vue";
