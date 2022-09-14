@@ -1,5 +1,5 @@
 <template>
-    <QrcodeVue :size="500" :value="route('qr', uuid)"></QrcodeVue>
+    <QrcodeVue :size="500" :value="route('doors.public', uuid)"></QrcodeVue>
 </template>
 
 <script setup>
