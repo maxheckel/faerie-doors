@@ -4,7 +4,15 @@
         <title>{{faerie.name}}</title>
         <meta name="description" :content="faerie.bio">
     </Head>
-    <div class="bg-amber-100 h-full">
+
+    <div v-if="data.loadingLocation" class="min-h-screen w-full absolute z-20 overflow-hidden">
+        <div class=" text-2xl bg-white rounded rounded-xl p-8 text-center m-10">Loading Location...</div>
+    </div>
+    <div v-if="!data.isNearby" class="min-h-screen w-full absolute z-20 overflow-hidden">
+        <div class=" text-2xl bg-white rounded rounded-xl p-8 text-center m-10">You must be closer to view the faerie!</div>
+    </div>
+
+    <div :class="{blur: !data.isNearby}" class="bg-amber-100 h-full">
         <div class="w-full h-80 bg-cover bg-center  rounded-bl-2xl rounded-br-2xl" :style="{'background-image': randomCover()}"></div>
 
         <div class="relative lg:w-1/6 w-1/2 mx-auto -mt-60">
@@ -106,7 +114,7 @@ import JetInputError from '@/Components/InputError.vue';
 import JetLabel from '@/Components/Label.vue';
 import {useForm, Head} from "@inertiajs/inertia-vue3";
 import Textarea from "@/Components/Textarea.vue";
-import {ref} from "vue";
+import {reactive, ref} from "vue";
 import Comment from "@/Components/Comment.vue";
 import Map from "@/Components/Map.vue";
 
@@ -156,11 +164,53 @@ const props = defineProps({
     old: Object
 })
 
+function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+    var R = 6371; // Radius of the earth in km
+    var dLat = deg2rad(lat2-lat1);  // deg2rad below
+    var dLon = deg2rad(lon2-lon1);
+    var a =
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon/2) * Math.sin(dLon/2)
+    ;
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    var d = R * c; // Distance in km
+    return d;
+}
+
+function deg2rad(deg) {
+    return deg * (Math.PI/180)
+}
+
+
+const geolocationOptions = {
+    enableHighAccuracy: true,
+    maximumAge: 10000,
+    timeout: 5000,
+};
+
+if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position){
+        data.loadingLocation = false
+        if (getDistanceFromLatLonInKm(position.coords.latitude, position.coords.longitude, props.faerie.latitude, props.faerie.longitude) > 1){
+            data.isNearby = false
+        } else {
+            enableScroll()
+            data.isNearby = true;
+        }
+    }, null, geolocationOptions);
+}
+
 if (props.old){
     form.email = props.old.email;
     form.name = props.old.name;
     form.message = props.old.message;
 }
+
+const data = reactive({
+    isNearby: false,
+    loadingLocation: true
+})
 
 const staticMarkers = [
     {
@@ -180,6 +230,48 @@ const staticMarkers = [
     })
 ]
 
+// left: 37, up: 38, right: 39, down: 40,
+// spacebar: 32, pageup: 33, pagedown: 34, end: 35, home: 36
+var keys = {37: 1, 38: 1, 39: 1, 40: 1};
+
+function preventDefault(e) {
+    e.preventDefault();
+}
+
+function preventDefaultForScrollKeys(e) {
+    if (keys[e.keyCode]) {
+        preventDefault(e);
+        return false;
+    }
+}
+
+// modern Chrome requires { passive: false } when adding event
+var supportsPassive = false;
+try {
+    window.addEventListener("test", null, Object.defineProperty({}, 'passive', {
+        get: function () { supportsPassive = true; }
+    }));
+} catch(e) {}
+
+var wheelOpt = supportsPassive ? { passive: false } : false;
+var wheelEvent = 'onwheel' in document.createElement('div') ? 'wheel' : 'mousewheel';
+
+// call this to Disable
+function disableScroll() {
+    window.addEventListener('DOMMouseScroll', preventDefault, false); // older FF
+    window.addEventListener(wheelEvent, preventDefault, wheelOpt); // modern desktop
+    window.addEventListener('touchmove', preventDefault, wheelOpt); // mobile
+    window.addEventListener('keydown', preventDefaultForScrollKeys, false);
+}
+
+// call this to Enable
+function enableScroll() {
+    window.removeEventListener('DOMMouseScroll', preventDefault, false);
+    window.removeEventListener(wheelEvent, preventDefault, wheelOpt);
+    window.removeEventListener('touchmove', preventDefault, wheelOpt);
+    window.removeEventListener('keydown', preventDefaultForScrollKeys, false);
+}
+disableScroll()
 
 
 function submit() {

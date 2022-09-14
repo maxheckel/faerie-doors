@@ -54,7 +54,7 @@ const geolocationOptions = {
 if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(showPosition, null, geolocationOptions);
 } else {
-    x.innerHTML = "Geolocation is not supported by this browser.";
+    alert("You must enable geolocation to use the map")
 }
 
 
