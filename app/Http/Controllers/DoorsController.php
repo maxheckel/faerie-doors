@@ -89,7 +89,7 @@ class DoorsController extends Controller
 
     public function show(Request $request, $id){
         $faerie = Faerie::where('id', $id)->with(['comments' => function($q){
-            return $q->where('public', true)->orderBy('created_at', 'desc');
+            return $q->orderBy('created_at', 'desc');
         }, 'comments.comments'])->firstOrFail();
         if ($faerie->user_id != Auth::id()){
             abort(403);
@@ -154,7 +154,7 @@ class DoorsController extends Controller
             $visit->save();
         }
         $visits = Visit::where('faerie_id', $faerie->id)->count();
-        
+
         $maxDistance = 0.02;
         $otherFaeries = Faerie::where(function ($q) use ($faerie, $maxDistance){
             $q->where('latitude', '>=', $faerie->latitude-$maxDistance)->orWhere('latitude', '<=', $faerie->latitude+$maxDistance);
