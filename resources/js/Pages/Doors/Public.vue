@@ -5,8 +5,9 @@
         <div class="relative lg:w-1/6 w-1/2 mx-auto -mt-60">
             <Portrait :image_url="faerie.image_url"></Portrait>
         </div>
-        <div class="text-2xl mt-8 text-center">
+        <div class="text-2xl my-16 text-center">
             You've found the home of {{ faerie.name }}!<br>
+            <span class="block text-md"> {{faerie.name}} has been visited {{visits}} times!</span>
             <Button class="bg-amber-800 block" @click="goto('comment')">Leave {{ faerie.name }} a message</Button>
         </div>
         <div class="mt-4 p-4 text-2xl font-bold bg-amber-50 m-8 rounded-lg">
@@ -146,6 +147,7 @@ const props = defineProps({
     otherFaeries: Array,
     profanity: Boolean,
     messageSent: Boolean,
+    visits: Number,
     old: Object
 })
 

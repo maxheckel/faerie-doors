@@ -16,6 +16,8 @@ return new class extends Migration
         Schema::create('visits', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->foreignIdFor(\App\Models\Faerie::class);
+            $table->ipAddress();
         });
     }
 

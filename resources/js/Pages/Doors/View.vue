@@ -23,6 +23,9 @@
             <Button>
                 <a :href="route('doors.edit', faerie.id)">Edit</a>
             </Button>
+            <Button class="ml-4 bg-blue-400 text-white">
+                <a :href="route('doors.public', faerie.uuid)">Go To Public Page</a>
+            </Button>
 
 
             <Button class="ml-4 bg-red-500" @click="goto(comments)">

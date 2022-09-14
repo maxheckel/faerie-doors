@@ -6,10 +6,12 @@ use App\Models\Comment;
 use App\Models\Faerie;
 use App\Models\FaerieTemplate;
 use App\Models\Locale;
+use App\Models\Visit;
 use App\Services\AI;
 use App\Services\Geocoding;
 use App\Services\Profanity;
 use App\Services\Weather;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -140,10 +142,19 @@ class DoorsController extends Controller
     }
 
     public function getPublic(Request $request, $slug){
+
         $faerie = Faerie::where('uuid', $slug)->with(['comments' => function($q){
             return $q->where('public', true)->orderBy('created_at', 'desc');
         }, 'comments.comments'])->firstOrFail();
-
+        $visitCheck = Visit::where('faerie_id', $faerie->id)->where('ip_address', $request->ip())->whereDate('created_at', Carbon::today())->first();
+        if ($visitCheck == null){
+            $visit = new Visit();
+            $visit->faerie_id = $faerie->id;
+            $visit->ip_address = $request->ip();
+            $visit->save();
+        }
+        $visits = Visit::where('faerie_id', $faerie->id)->count();
+        
         $maxDistance = 0.02;
         $otherFaeries = Faerie::where(function ($q) use ($faerie, $maxDistance){
             $q->where('latitude', '>=', $faerie->latitude-$maxDistance)->orWhere('latitude', '<=', $faerie->latitude+$maxDistance);
@@ -153,6 +164,7 @@ class DoorsController extends Controller
 
         return Inertia::render('Doors/Public', [
             'faerie' => $faerie,
+            'visits' => $visits,
             'profanity' => Session::get('profanity'),
             'messageSent' => Session::get('messageSent'),
             'old' => $request->old(),
