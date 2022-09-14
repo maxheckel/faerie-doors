@@ -8,7 +8,7 @@
     <div v-if="data.loadingLocation" class="min-h-screen w-full absolute z-20 overflow-hidden">
         <div class=" text-2xl bg-white rounded rounded-xl p-8 text-center m-10">Loading Location...</div>
     </div>
-    <div v-if="!data.isNearby" class="min-h-screen w-full absolute z-20 overflow-hidden">
+    <div v-if="!data.isNearby && !data.loadingLocation" class="min-h-screen w-full absolute z-20 overflow-hidden">
         <div class=" text-2xl bg-white rounded rounded-xl p-8 text-center m-10">You must be closer to view the faerie!</div>
     </div>
 
