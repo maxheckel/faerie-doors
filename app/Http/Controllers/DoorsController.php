@@ -109,6 +109,26 @@ class DoorsController extends Controller
         ]);
     }
 
+    public function update(Request $request, $id){
+        $faerie = Faerie::find($id);
+        if ($faerie->user_id != Auth::id()){
+            abort(403);
+        }
+        $profanityCheck = Profanity::hasProfanity($request->get('newBio'));
+        if ($profanityCheck !== null){
+            $request->request->set('newBio', $profanityCheck);
+            $request->request->set('bio', $profanityCheck);
+            return redirect()->back()->withInput($request->all())->with('profanity', true);
+        }
+
+        $faerie->bio = $request->get('newBio');
+        $faerie->latitude = $request->get('latitude');
+        $faerie->longitude = $request->get('longitude');
+        $faerie->name = $request->get('name');
+        $faerie->save();
+        return redirect()->to(route('dashboard'));
+    }
+
     public function edit(Request $request, $id){
         $faerie = Faerie::find($id);
         if ($faerie->user_id != Auth::id()){

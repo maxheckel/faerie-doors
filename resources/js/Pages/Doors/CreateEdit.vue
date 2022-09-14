@@ -101,12 +101,22 @@ function saveNewBio(){
 }
 
 function submit() {
-    form.post(route('doors.store'), {
-        preserveScroll: false,
-        preserveState: false
-    }, {
-        resetOnSuccess: false,
-    })
+    if (props.faerie){
+        form.put(route('doors.update', props.faerie.id), {
+            preserveScroll: false,
+            preserveState: false
+        }, {
+            resetOnSuccess: false,
+        })
+    } else {
+        form.post(route('doors.store'), {
+            preserveScroll: false,
+            preserveState: false
+        }, {
+            resetOnSuccess: false,
+        })
+    }
+
 }
 
 </script>
