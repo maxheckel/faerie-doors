@@ -6,7 +6,7 @@
                     <a :href="route('dashboard')">Back</a>
                 </Button>
             </div>
-            <div class="hidden md:visible absolute right-10 text-center top-10">
+            <div class="invisible md:visible absolute right-10 text-center top-10">
                 <QrcodeVue class="" :value="route('doors.public', faerie.uuid)" :size="100" :level="'H'"></QrcodeVue>
                 <Button class="text-center mx-auto inline-block relative mt-4">
                     <a target="_blank" :href="route('qr', faerie.uuid)">Print</a>
