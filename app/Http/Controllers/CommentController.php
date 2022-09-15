@@ -7,6 +7,7 @@ use App\Models\Faerie;
 use App\Services\Profanity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class CommentController extends Controller
 {
@@ -33,6 +34,9 @@ class CommentController extends Controller
         $comment->faerie_id = $faerie->id;
         $comment->save();
 
+        Mail::raw("Faerie received a message: ".route('doors.show', $faerie->id), function ($message) use ($faerie){
+            $message->to($faerie->user->email)->subject('New message!');
+        });
         return redirect()->back()->with('messageSent', true);
     }
 
@@ -56,6 +60,12 @@ class CommentController extends Controller
         $comment->is_faerie = true;
         $comment->name = $parentComment->faerie->name;
         $comment->save();
+
+        if ($parentComment->email != null){
+            Mail::raw("You said: \"".$parentComment->comment."\"\n and ".$parentComment->faerie->name.' replied: "'.$comment->comment.'"', function ($message) use ($parentComment){
+                $message->to($parentComment->email)->subject($parentComment->faerie->name.' replied to you!');
+            });
+        }
 
         return redirect()->back()->with('messageSent', true);
     }
