@@ -6,7 +6,7 @@
                     <a :href="route('dashboard')">Back</a>
                 </Button>
             </div>
-            <div class="absolute right-10 text-center top-10">
+            <div class="hidden md:visible absolute right-10 text-center top-10">
                 <QrcodeVue class="" :value="route('doors.public', faerie.uuid)" :size="100" :level="'H'"></QrcodeVue>
                 <Button class="text-center mx-auto inline-block relative mt-4">
                     <a target="_blank" :href="route('qr', faerie.uuid)">Print</a>
@@ -19,7 +19,9 @@
         </div>
         <div class="text-2xl mt-8 text-center">
              {{ faerie.name }}<br>
-
+            <span class="text-xl block">
+                {{visits}} visits
+            </span>
             <Button>
                 <a :href="route('doors.edit', faerie.id)">Edit</a>
             </Button>
@@ -92,7 +94,8 @@ const props = defineProps({
     otherFaeries: Array,
     profanity: Boolean,
     messageSent: Boolean,
-    old: Object
+    old: Object,
+    visits: Number
 })
 
 

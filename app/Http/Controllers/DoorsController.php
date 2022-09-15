@@ -99,6 +99,7 @@ class DoorsController extends Controller
             abort(403);
         }
 //        $this->weatherService->getCurrentWeather($faerie->latitude, $faerie->longitude);
+        $visits = Visit::where('faerie_id', $faerie->id)->count();
         $maxDistance = 0.02;
         $otherFaeries = Faerie::where(function ($q) use ($faerie, $maxDistance){
             $q->where('latitude', '>=', $faerie->latitude-$maxDistance)->orWhere('latitude', '<=', $faerie->latitude+$maxDistance);
@@ -111,7 +112,8 @@ class DoorsController extends Controller
             'profanity' => Session::get('profanity'),
             'messageSent' => Session::get('messageSent'),
             'old' => $request->old(),
-            'otherFaeries' => $otherFaeries
+            'otherFaeries' => $otherFaeries,
+            'visits' => $visits
         ]);
     }
 
