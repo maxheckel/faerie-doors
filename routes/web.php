@@ -47,7 +47,7 @@ Route::get('mailtest', function (){
     {
         $message->from('grandmastser@faeriedoors.com', 'Grand Master');
 
-        $message->to('heckel.max@gmail.com');
+        $message->to('heckel.max@gmail.com')->subject('New faerie message');
     });
 });
 Route::get('/faerie/{slug}', [DoorsController::class, 'getPublic'])->name('doors.public');
