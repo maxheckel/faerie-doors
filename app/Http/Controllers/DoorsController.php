@@ -51,20 +51,24 @@ class DoorsController extends Controller
     }
 
     public function store(Request $request){
-        $resp = Geocoding::getForLatLng($request->get('latitude'), $request->get('longitude'));
-        $resp = collect($resp->results[0]->address_components);
-        $localeName = '';
-        $state = '';
-        foreach ($resp as $component){
-            if (in_array('locality', $component->types)){
-                $localeName = strtolower($component->short_name);
+        if ($request->get('latitude') == null){
+            $resp = Geocoding::getForLatLng($request->get('latitude'), $request->get('longitude'));
+            $resp = collect($resp->results[0]->address_components);
+            $localeName = '';
+            $state = '';
+            foreach ($resp as $component){
+                if (in_array('locality', $component->types)){
+                    $localeName = strtolower($component->short_name);
+                }
+                if (in_array('administrative_area_level_1', $component->types)){
+                    $state = strtolower($component->long_name);
+                }
             }
-            if (in_array('administrative_area_level_1', $component->types)){
-                $state = strtolower($component->long_name);
-            }
+            $locale = Locale::where('name', $localeName)->where('state', $state)->firstOrCreate();
+        } else {
+            $locale = Auth::user()->locales->first();
         }
-        $locale = Locale::where('name', $localeName)->where('state', $state)->firstOrCreate();
-        $template = FaerieTemplate::find($request->get('template_id'));
+         $template = FaerieTemplate::find($request->get('template_id'));
 
         $faerie = new Faerie();
         $faerie->faerie_template_id = $request->get('template_id');
