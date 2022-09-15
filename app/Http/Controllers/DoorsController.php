@@ -159,7 +159,7 @@ class DoorsController extends Controller
             $visit->faerie_id = $faerie->id;
             $visit->ip_address = $request->ip();
             $visit->save();
-            Mail::raw("Faerie was visited: ".route('doors.view', $faerie->id), function ($message) use ($faerie){
+            Mail::raw("Faerie was visited: ".route('doors.show', $faerie->id), function ($message) use ($faerie){
                 $message->to($faerie->user->email)->subject('New visit!');
             });
         }
