@@ -189,17 +189,17 @@ const geolocationOptions = {
     timeout: 5000,
 };
 
-if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(position){
-        data.loadingLocation = false
-        if (getDistanceFromLatLonInKm(position.coords.latitude, position.coords.longitude, props.faerie.latitude, props.faerie.longitude) > 1){
-            data.isNearby = false
-        } else {
-            enableScroll()
-            data.isNearby = true;
-        }
-    }, null, geolocationOptions);
-}
+// if (navigator.geolocation) {
+//     navigator.geolocation.getCurrentPosition(function(position){
+//         data.loadingLocation = false
+//         if (getDistanceFromLatLonInKm(position.coords.latitude, position.coords.longitude, props.faerie.latitude, props.faerie.longitude) > 1){
+//             data.isNearby = false
+//         } else {
+//             enableScroll()
+//             data.isNearby = true;
+//         }
+//     }, null, geolocationOptions);
+// }
 
 if (props.old){
     form.email = props.old.email;
@@ -208,8 +208,8 @@ if (props.old){
 }
 
 const data = reactive({
-    isNearby: false,
-    loadingLocation: true
+    isNearby: true,
+    loadingLocation: false
 })
 
 const staticMarkers = [
