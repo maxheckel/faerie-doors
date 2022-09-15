@@ -62,7 +62,7 @@ class CommentController extends Controller
         $comment->save();
 
         if ($parentComment->email != null){
-            Mail::raw("You said: \"".$parentComment->comment."\"\n and ".$parentComment->faerie->name.' replied: "'.$comment->comment.'"', function ($message) use ($parentComment){
+            Mail::raw("You said: \"".$parentComment->comment."\"\n".$parentComment->faerie->name.' replied: "'.$comment->comment.'"', function ($message) use ($parentComment){
                 $message->to($parentComment->email)->subject($parentComment->faerie->name.' replied to you!');
             });
         }
