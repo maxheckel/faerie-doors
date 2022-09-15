@@ -51,7 +51,7 @@ class DoorsController extends Controller
     }
 
     public function store(Request $request){
-        if ($request->get('latitude') == null){
+        if ($request->get('latitude') != null){
             $resp = Geocoding::getForLatLng($request->get('latitude'), $request->get('longitude'));
             $resp = collect($resp->results[0]->address_components);
             $localeName = '';
