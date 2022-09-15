@@ -42,6 +42,14 @@ Route::middleware([
     })->name('qr');
 
 });
+Route::get('mailtest', function (){
+    \Illuminate\Support\Facades\Mail::raw('Text to e-mail', function($message)
+    {
+        $message->from('grandmastser@faeriedoors.com', 'Grand Master');
+
+        $message->to('heckel.max@gmail.com');
+    });
+});
 Route::get('/faerie/{slug}', [DoorsController::class, 'getPublic'])->name('doors.public');
 Route::post('/faerie/{slug}', [CommentController::class, 'createComment'])->name('leave-comment');
 Route::post('/comments/{id}', [CommentController::class, 'createReply'])->name('leave-reply');
