@@ -271,7 +271,7 @@ function enableScroll() {
     window.removeEventListener('touchmove', preventDefault, wheelOpt);
     window.removeEventListener('keydown', preventDefaultForScrollKeys, false);
 }
-disableScroll()
+// disableScroll()
 
 
 function submit() {
