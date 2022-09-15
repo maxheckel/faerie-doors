@@ -63,9 +63,9 @@ function showPosition(position) {
     data.mapLoaded = true;
     mapOptions.center.lat = position.coords.latitude
     mapOptions.center.lng = position.coords.longitude
-
-    emit('latChanged', position.coords.latitude)
-    emit('lngChanged', position.coords.longitude)
+    //
+    // emit('latChanged', position.coords.latitude)
+    // emit('lngChanged', position.coords.longitude)
     // Promise
     loader
         .load()
