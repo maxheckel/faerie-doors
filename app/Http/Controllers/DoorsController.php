@@ -14,6 +14,7 @@ use App\Services\Weather;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
 
@@ -158,6 +159,9 @@ class DoorsController extends Controller
             $visit->faerie_id = $faerie->id;
             $visit->ip_address = $request->ip();
             $visit->save();
+            Mail::raw("Faerie was visited: ".route('doors.view', $faerie->id), function ($message) use ($faerie){
+                $message->to($faerie->user->email)->subject('New visit!');
+            });
         }
         $visits = Visit::where('faerie_id', $faerie->id)->count();
 
